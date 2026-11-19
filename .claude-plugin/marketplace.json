@@ -1,0 +1,17 @@
+{
+  "name": "koushilmp",
+  "owner": {
+    "name": "Koushil"
+  },
+  "plugins": [
+    {
+      "name": "koushil-skills",
+      "description": "Koushil's collection of Claude skills.",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/trailhead"
+      ]
+    }
+  ]
+}
