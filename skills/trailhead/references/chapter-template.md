@@ -1,6 +1,6 @@
 # Chapter template
 
-Mirrors `systemdesign/00-fundamentals/05-cap-theorem/README.md`. Sections marked (+) are additions that make the chapter deeper than the original format. Use `---` between major sections.
+Voice and formatting rules are in `style-guide.md`. Sections marked (+) add depth beyond a basic overview. For end-to-end case-study chapters use the case-study layout in the style guide instead. Use `---` between major sections.
 
 ```markdown
 # <Topic Title>
@@ -14,7 +14,7 @@ Mirrors `systemdesign/00-fundamentals/05-cap-theorem/README.md`. Sections marked
 3-5 verifiable outcomes: "By the end you can ... ".
 
 ## Introduction
-A concrete analogy from everyday life (the CAP chapter uses two bank branches), then 1-2 sentences naming the concept.
+A concrete analogy from everyday life (e.g. a database consistency chapter might use two bank branches sharing accounts), then 1-2 sentences naming the concept.
 
 ## The Problem It Solves
 What breaks without it. Bullet the mistakes people make when they don't understand it.
@@ -29,7 +29,7 @@ Numbered walk-through of the internals (request lifecycle, algorithm, protocol e
 Runnable code in the user's chosen stack with expected output. Explain each non-obvious line. Mark pseudocode as pseudocode.
 
 ## Real-World Examples / In Practice
-Named tools, companies, or configurations that use it, and what they chose and why.
+A table of named tools, products, or configurations (`| Name | Category | Why |`) followed by a bold **Important nuance** paragraph, then a "Practical meaning for <audience> developers" subsection with code and 2-4 explanatory bullets.
 
 ## Trade-offs and When NOT to Use It (+)
 Costs, limits, alternatives, decision table.
@@ -39,6 +39,9 @@ What goes wrong in production, symptoms, how to diagnose, how to fix.
 
 ## Common Misconceptions
 `**"Quoted wrong belief"**` followed by the correction.
+
+## Choosing <A> vs <B> for Your Situation
+Numbered questions, each with 2 bullets mapping an answer to a choice. Include only when the topic involves a real decision.
 
 ## Interview Tips
 What interviewers ask, the nuance that separates good answers, a sample answer structure.

@@ -1,17 +1,17 @@
 ---
 name: trailhead
-description: Generates a complete, beginner-to-expert learning knowledge base on any technology, tool, framework, language, or concept (e.g. Kubernetes, Kafka, Rust, OAuth, GraphQL, Terraform) in the style of the user's systemdesign repo. Produces a root README with roadmap and time estimates, numbered sections each with its own README index, one folder per topic containing an in-depth chapter README (intro, problem it solves, core concepts, step-by-step internals, code examples, misconceptions, interview tips, takeaways, resources) with Mermaid diagrams rendered to images/diagram-N.svg, plus a one-page SVG cheatsheet per section. Use whenever the user asks for in-depth documentation, a handbook, a study guide, a "zero to expert" roadmap, a learning path, a tutorial series, or a knowledge base on a topic, or says "document X like systemdesign" or "trailhead" - even if they never name the format.
+description: Generates a complete, beginner-to-expert learning knowledge base on any technology, tool, framework, language, or concept (e.g. Kubernetes, Kafka, Rust, OAuth, GraphQL, Terraform). Produces a root README with roadmap and time estimates, numbered sections each with a README index, one folder per topic with an in-depth chapter (intro, problem it solves, core concepts, step-by-step internals, code examples, misconceptions, interview tips, takeaways, resources, exercises), Mermaid diagrams rendered to SVG images, a one-page SVG cheatsheet per section, and a glossary. Use whenever the user asks for in-depth documentation, a handbook, a study guide, a "zero to expert" roadmap, a learning path, a tutorial series, or a knowledge base on a topic, even if they never name the format.
 ---
 
 # Trailhead
 
-Build a learning knowledge base that takes a reader from zero to expert on one topic. It mirrors the layout of the user's `systemdesign` repo, which they already like, with extra depth added per chapter.
+Build a learning knowledge base that takes a reader from zero to expert on one topic. The output is a navigable folder of Markdown chapters with diagrams, cheatsheets and exercises.
 
 The reader should finish each chapter able to explain *why* the thing exists, not just *what* it is. Everything below serves that.
 
-## Step 0 - Clarify first (the user's global rule)
+## Step 0 - Clarify first
 
-Before writing anything, ask (AskUserQuestion, 1-4 questions) about what you can't infer: topic and boundaries, audience background (the systemdesign docs assume JavaScript/Node developers - confirm the language/stack for examples), target depth/size (compact ~10 topics vs full 30+), and output location (default: `./<topic-slug>/` in the current directory). Skip questions the request already answers. Then restate the plan in 1-3 sentences.
+Before writing anything, ask (AskUserQuestion, 1-4 questions) about what you can't infer: topic and boundaries, audience background and the language/stack to use for code examples, target depth/size (compact ~10 topics vs full 30+), and output location (default: `./<topic-slug>/` in the current directory). Skip questions the request already answers. Then restate the plan in 1-3 sentences.
 
 ## Step 1 - Design the roadmap
 
@@ -42,11 +42,11 @@ Show the user the section/topic outline and get a go-ahead before generating all
 └── glossary.md                    # (improvement) every term, one line each, linking to the chapter that teaches it
 ```
 
-Root and section READMEs follow the patterns in the user's `~/AI/systemdesign/README.md` and `00-fundamentals/README.md`; read one of them if you need the exact feel. Counts and hour totals in the root README must be computed from the real topic list, not guessed.
+Root and section README structure is in `references/style-guide.md`. Counts and hour totals in the root README must be computed from the real topic list, not guessed.
 
 ## Step 3 - Write each chapter
 
-Follow `references/chapter-template.md` exactly for section order and the improvements over the original format (learning objectives, hands-on lab, exercises with answers, "when NOT to use it", failure modes, further reading). Chapters are independent, so for 5+ topics fan them out to parallel subagents, giving each the template path, its topic, prerequisites, neighbours for prev/next links, and the audience/stack. Do not let agents invent links: every relative link must point at a file that exists.
+Read `references/style-guide.md` (voice, formatting, README patterns, cheatsheet palette) and follow `references/chapter-template.md` exactly for section order and the improvements over the original format (learning objectives, hands-on lab, exercises with answers, "when NOT to use it", failure modes, further reading). Chapters are independent, so for 5+ topics fan them out to parallel subagents, giving each the template path, its topic, prerequisites, neighbours for prev/next links, and the audience/stack. Do not let agents invent links: every relative link must point at a file that exists.
 
 Depth rules that make the docs genuinely in-depth:
 - Open with an analogy, then the concrete problem the thing solves. Explain *why* before *how*.
@@ -63,13 +63,19 @@ Write diagrams as ```mermaid blocks (3-5 per chapter: architecture, step-by-step
 python3 ~/.claude/skills/trailhead/scripts/render_diagrams.py <chapter>/README.md
 ```
 
-This writes `images/diagram-N.svg` and inserts `![Diagram N](./images/diagram-N.svg)` after each block (idempotent; needs Node/npx; `--no-render` only fixes the markdown). The Mermaid source stays in the README so diagrams remain editable and still render on GitHub. If rendering fails, fix the Mermaid syntax and rerun; never ship a broken image link.
+This writes `images/diagram-N.svg` and inserts `![Diagram N](./images/diagram-N.svg)` after each block (idempotent; needs Node and network access for `npx` on first use; `--no-render` only fixes the markdown). The Mermaid source stays in the README so diagrams remain editable and still render on GitHub. If rendering fails, fix the Mermaid syntax and rerun; never ship a broken image link.
 
-Cheatsheets: one hand-built SVG per section (1480px wide, dark header band with title and "N concepts - folder: ...", a grid of rounded cards, each with a numbered colour tab, topic title, and a one-line summary), matching the `cheatsheet-*.svg` files in systemdesign. Use a different accent colour per section.
+Cheatsheets: write a JSON file `{"title": "...", "subtitle": "N concepts - <section folder>", "accent": "#1e3a8a", "tint": "#dbeafe", "items": [{"num": "00", "title": "...", "summary": "one line"}]}` per section and run:
+
+```bash
+python3 ~/.claude/skills/trailhead/scripts/make_cheatsheet.py <section>.json <topic>/cheatsheet-NN-<section>.svg
+```
+
+Pick a different accent/tint pair per section from the palette in `references/style-guide.md` and keep each summary under ~60 characters so it fits its card.
 
 ## Step 5 - Verify before reporting done
 
-The user's global rule: after changes, check for bugs and confirm the work does what it should. Concretely:
+Check your own work for bugs and confirm it does what it should:
 1. Every relative link in every README resolves to an existing file (script it: regex `\]\((\.[^)]+)\)`, check the path).
 2. Every `images/diagram-N.svg` referenced exists and is non-empty; every Mermaid block has a following image.
 3. Topic counts and hour totals in the root/section READMEs match the actual folders.
